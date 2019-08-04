@@ -1,4 +1,4 @@
-package ge.vako.springreactivepostgres.api;
+package ge.vako.springreactivepostgres.api.v1;
 
 import ge.vako.springreactivepostgres.domain.Book;
 import ge.vako.springreactivepostgres.repository.BookRepository;
@@ -7,7 +7,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("books")
+@RequestMapping("v1/books")
 public class BookController {
 
 	private final BookRepository repository;
@@ -38,8 +38,8 @@ public class BookController {
 	public Mono<Book> editBook(@PathVariable Long id, @RequestBody Book bookToSave) {
 		return repository.findById(id)
 				.switchIfEmpty(Mono.error(new RuntimeException("book with id " + id + " not found")))
-				.flatMap(book -> {
-					bookToSave.setId(book.getId());
+				.flatMap(existingBook -> {
+					bookToSave.setId(existingBook.getId());
 					return repository.save(bookToSave);
 				});
 	}
